@@ -23,10 +23,9 @@ proc huami*(password, key: string): (string, string) =
       md5two = md5(STR1, md5one)
       md5three = md5(STR2, md5one)
       code16: string
-    # # 转换大小写
-    var
       rule = md5three
       source: array[32, char]
+    # 转换大小写
     for i in 0..31:
       if rule[i] in STR3:
         source[i] = toUpperAscii(md5two[i])
