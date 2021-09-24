@@ -42,16 +42,16 @@ when isMainModule:
     huami_key, password: string
   for kind, key, val in getopt():
     case kind
-    of cmdArgument:
-      discard
     of cmdLongOption, cmdShortOption:
       case key
-      of "help", "h":
-        echo "Please use ./flowerpassword --key=KEY --password=PASSWORD"
-        quit()
       of "key": huami_key = val
       of "password": password = val
-    of cmdEnd: assert(false) # cannot happen
+    else:
+      discard
+
+  if 0 in [huami_key.len, password.len]:
+    echo "Please use ./flowerpassword --key=KEY --password=PASSWORD"
+    quit()
 
   var (_, r) = huami(password, huami_key)
   echo seek_password(r)
