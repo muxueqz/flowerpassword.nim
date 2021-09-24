@@ -10,7 +10,7 @@ const
   STR3 = "sunlovesnow1990090127xykab"
 
 
-proc huami(password, key: string): (string, string) =
+proc huami*(password, key: string): (string, string) =
     # 得到md5one, md5two, md5three
     # hmac.new(key, msg)
     var
@@ -54,4 +54,5 @@ proc main() =
   var (r, _) = huami(password, huami_key)
   echo r
 
-main()
+when isMainModule:
+  main()
