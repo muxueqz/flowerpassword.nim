@@ -1,6 +1,4 @@
 import std/strutils
-import hmac
-import parseopt
 
 var
   huami_key, password: string
@@ -9,14 +7,22 @@ const
   STR2 = "kise"
   STR3 = "sunlovesnow1990090127xykab"
 
+when defined(js):
+  proc md5*(key, password: cstring): cstring {.importc: "md5".}
+else:
+  import hmac
+  import parseopt
+  proc md5*(key, password: string): string =
+    return hmac_md5(key, password).toHex()
+
 
 proc huami*(password, key: string): (string, string) =
     # 得到md5one, md5two, md5three
     # hmac.new(key, msg)
     var
-      md5one = hmac_md5(key, password).toHex()
-      md5two = hmac_md5(STR1, md5one).toHex()
-      md5three = hmac_md5(STR2, md5one).toHex()
+      md5one = md5(key, password)
+      md5two = md5(STR1, md5one)
+      md5three = md5(STR2, md5one)
       code16: string
     # # 转换大小写
     var
@@ -37,7 +43,7 @@ proc huami*(password, key: string): (string, string) =
       code16 = source[0..15].join()
     return (code16, source.join())
 
-proc main() =
+when isMainModule:
   for kind, key, val in getopt():
     case kind
     of cmdArgument:
@@ -54,5 +60,7 @@ proc main() =
   var (r, _) = huami(password, huami_key)
   echo r
 
-when isMainModule:
-  main()
+when defined(js):
+  proc generate_password*(password, key: string): cstring {.exportc.} =
+    var (result, _) = huami(password, key)
+    return result
