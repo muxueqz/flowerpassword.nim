@@ -1,5 +1,6 @@
 import intsets
 import parseopt
+import std/sugar
 from flowerpassword import huami
 
 const
@@ -9,20 +10,17 @@ const
   number = "0123456789"
   alphabet = lower & upper & number & punctuation
 
-proc get_map_index(sub_hash: string): seq[int] =
-  var
-    count = 0
-  for c in sub_hash:
-    count = (count + ord(c)) mod len(alphabet)
-    result.add(count)
-
 proc seek_password*(hash: string): string =
   # generate alphabet
   # try to generate password
   for i in 0..(len(hash) - 10):
     var
       sub_hash = hash[i..i + 9]
-      map_index = get_map_index(sub_hash)
+      count = 0
+      map_index = collect(newSeq):
+        for c in sub_hash:
+          count = (count + ord(c)) mod len(alphabet)
+          count
       sk_pwd = ""
       match = initIntSet()
     for i in map_index:
