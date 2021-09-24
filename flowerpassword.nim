@@ -18,7 +18,6 @@ else:
 
 proc huami*(password, key: string): (string, string) =
     # 得到md5one, md5two, md5three
-    # hmac.new(key, msg)
     var
       md5one = md5(key, password)
       md5two = md5(STR1, md5one)
@@ -28,18 +27,15 @@ proc huami*(password, key: string): (string, string) =
     var
       rule = md5three
       source: array[32, char]
-    # for i in range(0, 32):
     for i in 0..31:
       if rule[i] in STR3:
         source[i] = toUpperAscii(md5two[i])
       else:
         source[i] = md5two[i]
-        # source[i] = "x"
     #保证密码首字母为字母---why?
     if source[0].isDigit():
       code16 = join(["K", source[1..15].join()])
     else:
-        # code16 = "".join(source[0:16])
       code16 = source[0..15].join()
     return (code16, source.join())
 
