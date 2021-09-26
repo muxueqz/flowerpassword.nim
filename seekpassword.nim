@@ -1,6 +1,7 @@
 import intsets
 import parseopt
 import std/sugar
+import system
 from flowerpassword import huami
 
 const
@@ -52,6 +53,8 @@ when isMainModule:
   if 0 in [huami_key.len, password.len]:
     echo "Please use ./flowerpassword --key=KEY --password=PASSWORD"
     quit()
+  if password == "-":
+    password = stdin.readLine()
 
   var (_, r) = huami(password, huami_key)
   echo seek_password(r)

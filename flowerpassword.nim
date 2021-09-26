@@ -1,7 +1,5 @@
 import std/strutils
 
-var
-  huami_key, password: string
 const
   STR1 = "snow"
   STR2 = "kise"
@@ -41,18 +39,21 @@ proc huami*(password, key: string): (string, string) =
     return (code16, source.join())
 
 when isMainModule:
+  var
+    huami_key, password: string
   for kind, key, val in getopt():
     case kind
-    of cmdArgument:
-      discard
     of cmdLongOption, cmdShortOption:
       case key
-      of "help", "h":
-        echo "Please use ./flowerpassword --key=KEY --password=PASSWORD"
-        quit()
       of "key": huami_key = val
       of "password": password = val
-    of cmdEnd: assert(false) # cannot happen
+    else:
+      discard
+
+  if 0 in [huami_key.len, password.len]:
+    echo "Please use ./flowerpassword --key=KEY --password=PASSWORD"
+    quit()
+
 
   var (r, _) = huami(password, huami_key)
   echo r
