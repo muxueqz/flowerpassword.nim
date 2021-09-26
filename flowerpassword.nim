@@ -8,20 +8,22 @@ const
   STR3 = "sunlovesnow1990090127xykab"
 
 when defined(js):
-  proc md5*(key, password: cstring): cstring {.importc: "md5".}
+  proc md5(key, password: cstring): cstring {.importc: "md5".}
+  proc md5hex(key, password: cstring): cstring =
+    return md5(password, key)
 else:
   import hmac
   import parseopt
-  proc md5*(key, password: string): string =
+  proc md5hex(key, password: string): string =
     return hmac_md5(key, password).toHex()
 
 
 proc huami*(password, key: string): (string, string) =
     # 得到md5one, md5two, md5three
     var
-      md5one = md5(key, password)
-      md5two = md5(STR1, md5one)
-      md5three = md5(STR2, md5one)
+      md5one = md5hex(key, password)
+      md5two = md5hex(STR1, md5one)
+      md5three = md5hex(STR2, md5one)
       code16: string
       rule = md5three
       source: array[32, char]
@@ -54,8 +56,3 @@ when isMainModule:
 
   var (r, _) = huami(password, huami_key)
   echo r
-
-when defined(js):
-  proc generate_password*(password, key: string): cstring {.exportc.} =
-    var (result, _) = huami(password, key)
-    return result
